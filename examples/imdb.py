@@ -33,6 +33,21 @@ def evaluate(model, metric_name='acc', **kwargs):
 
     return metrics[metric_name]
 
+def step(model, **kwargs):
+    """Step model.
+
+    # Arguments
+        model: Model.
+        **kwargs: Arguments to pass on to fit().
+
+    # Returns
+        Model with updated weights, hyperparameters.
+    """
+
+    model.fit(**kwargs)
+
+    return model
+
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
 
@@ -69,7 +84,8 @@ p = evaluate(model, x=x_val, y=y_val)
 
 print('Initial p = {}'.format(p))
 
-model.fit(partial_x_train, partial_y_train, epochs=4, batch_size=512)
+model = step(model, x=partial_x_train, y=partial_y_train, epochs=4,
+    batch_size=512)
 
 p = evaluate(model, x=x_val, y=y_val)
 
