@@ -48,13 +48,17 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
+val_loss, val_acc = model.evaluate(x_val, y_val)
+
+print('Initial val. acc {}, loss {}'.format(val_acc, val_loss))
+
 model.fit(partial_x_train, partial_y_train, epochs=4, batch_size=512)
 
-val_results = model.evaluate(x_val, y_val)
+val_loss, val_acc = model.evaluate(x_val, y_val)
 
-print('Validation acc {}, loss {}'.format(val_results[0], val_results[1]))
+print('Validation acc {}, loss {}'.format(val_acc, val_loss))
 
-test_results = model.evaluate(x_test, y_test)
+test_loss, test_acc = model.evaluate(x_test, y_test)
 
-print('Test acc {}, loss {}'.format(test_results[0], test_results[1]))
+print('Test acc {}, loss {}'.format(test_acc, test_loss))
 
