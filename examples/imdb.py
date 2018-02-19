@@ -62,5 +62,3 @@ test_loss, test_acc = model.evaluate(x_test, y_test)
 
 print('Test acc {}, loss {}'.format(test_acc, test_loss))
 
-exit(0)
-
