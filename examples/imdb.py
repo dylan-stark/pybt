@@ -16,6 +16,24 @@ from keras.utils import to_categorical
 
 import numpy as np
 
+def eval(model, x, y, metric_name='acc'):
+    """Evaluate model performance.
+
+    # Arguments
+        m: Model.
+        x: Samples.
+        y: Labels.
+        metric_name: Name of metric to use as score (default: 'acc').
+
+    # Returns
+        Real, score
+    """
+
+    metrics_values = model.evaluate(x=x, y=y)
+    metrics = {k: v for k, v in zip(model.metrics_names, metrics_values)}
+
+    return metrics[metric_name]
+
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
 
@@ -48,15 +66,15 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-val_loss, val_acc = model.evaluate(x_val, y_val)
+p = eval(model, x_val, y_val)
 
-print('Initial val. acc {}, loss {}'.format(val_acc, val_loss))
+print('Initial p = {}'.format(p))
 
 model.fit(partial_x_train, partial_y_train, epochs=4, batch_size=512)
 
-val_loss, val_acc = model.evaluate(x_val, y_val)
+p = eval(model, x_val, y_val)
 
-print('Validation acc {}, loss {}'.format(val_acc, val_loss))
+print('After one step p = {}'.format(p))
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 
