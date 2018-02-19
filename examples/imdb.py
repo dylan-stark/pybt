@@ -16,17 +16,16 @@ from keras.utils import to_categorical
 
 import numpy as np
 
-def eval(model, metric_name='acc', **kwargs):
+def evaluate(model, metric_name='acc', **kwargs):
     """Evaluate model performance.
 
     # Arguments
-        m: Model.
-        x: Samples.
-        y: Labels.
+        model: Model.
         metric_name: Name of metric to use as score (default: 'acc').
+        **kwargs: Arguments to pass on to evaluate().
 
     # Returns
-        Real, score
+        Real, score.
     """
 
     metrics_values = model.evaluate(**kwargs)
@@ -66,13 +65,13 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-p = eval(model, x=x_val, y=y_val)
+p = evaluate(model, x=x_val, y=y_val)
 
 print('Initial p = {}'.format(p))
 
 model.fit(partial_x_train, partial_y_train, epochs=4, batch_size=512)
 
-p = eval(model, x=x_val, y=y_val)
+p = evaluate(model, x=x_val, y=y_val)
 
 print('After one step p = {}'.format(p))
 
