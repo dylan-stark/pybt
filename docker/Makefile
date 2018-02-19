@@ -16,3 +16,5 @@ ipython: build
 notebook: build
 	docker run -it  -p 8888:8888 -v $(SRC):/src/workspace -v $(DATA):/data pybt
 
+examples: build
+	docker run -it -v $(SRC):/src/workspace -v $(DATA):/data pybt python workspace/examples/$(EXAMPLE).py
