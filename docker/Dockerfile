@@ -35,7 +35,7 @@ RUN \
     cd keras && \
     python3 setup.py install
 
-RUN groupadd -r pybt && useradd -r -g pybt pybt
+RUN groupadd -r pybt && useradd -r -m -g pybt pybt
 USER pybt
 
 ENV KERAS_BACKEND=tensorflow
