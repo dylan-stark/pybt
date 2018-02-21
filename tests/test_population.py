@@ -21,3 +21,20 @@ class TestPopulation(object):
 
         assert len(pop._models) == 2
         assert pop._models == ms
+
+class TestTrain(object):
+    def test_no_steps(self):
+        with pytest.raises(TypeError):
+            pop = Population()
+            pop.train()
+
+    def test_zero_steps(self):
+        with pytest.raises(ValueError):
+            pop = Population()
+            pop.train(num_steps=0)
+
+    def test_neg_steps(self):
+        with pytest.raises(ValueError):
+            pop = Population()
+            pop.train(num_steps=-1)
+
