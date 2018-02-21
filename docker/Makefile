@@ -5,7 +5,7 @@ DATA?="${HOME}/Data"
 SRC?=$(shell dirname `pwd`)
 
 build:
-	docker build -t pybt .
+	docker build -t pybt -f docker/Dockerfile .
 
 bash: build
 	docker run -it -v $(SRC):/src/workspace -v $(DATA):/data pybt bash

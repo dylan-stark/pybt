@@ -35,6 +35,11 @@ RUN \
     cd keras && \
     python3 setup.py install
 
+RUN \
+    git clone https://github.com/pytest-dev/pytest.git && \
+    cd pytest && \
+    python3 setup.py install
+
 RUN groupadd -r pybt && useradd -r -m -g pybt pybt
 USER pybt
 

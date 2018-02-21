@@ -16,37 +16,7 @@ from keras.utils import to_categorical
 
 import numpy as np
 
-def evaluate(model, metric_name='acc', **kwargs):
-    """Evaluate model performance.
-
-    # Arguments
-        model: Model.
-        metric_name: Name of metric to use as score (default: 'acc').
-        **kwargs: Arguments to pass on to evaluate().
-
-    # Returns
-        Real, score.
-    """
-
-    metrics_values = model.evaluate(**kwargs)
-    metrics = {k: v for k, v in zip(model.metrics_names, metrics_values)}
-
-    return metrics[metric_name]
-
-def step(model, **kwargs):
-    """Step model.
-
-    # Arguments
-        model: Model.
-        **kwargs: Arguments to pass on to fit().
-
-    # Returns
-        Model with updated weights, hyperparameters.
-    """
-
-    model.fit(**kwargs)
-
-    return model
+from pybt import Population
 
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
@@ -80,18 +50,11 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-p = evaluate(model, x=x_val, y=y_val)
-
-print('Initial p = {}'.format(p))
-
-model = step(model, x=partial_x_train, y=partial_y_train, epochs=4,
-    batch_size=512)
-
-p = evaluate(model, x=x_val, y=y_val)
-
-print('After one step p = {}'.format(p))
+# Create a population with this model and train for 10 steps
+pop = Population(models=model)
+model = pop.train(num_steps = 10)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 
-print('Test acc {}, loss {}'.format(test_acc, test_loss))
+print('Test accuracy after training is {}'.format(test_acc, test_loss))
 
