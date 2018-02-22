@@ -51,10 +51,10 @@ model.compile(optimizer=RMSprop(lr=0.001),
               metrics=['accuracy'])
 
 # Create a population with this model and train for 10 steps
-pop = Population(models=model)
-model = pop.train(num_steps = 4,
+pop = Population(models=model,
     step_args = {'x': partial_x_train, 'y': partial_y_train},
     eval_args = {'x': x_val, 'y': y_val})
+model = pop.train(num_steps = 4)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 
