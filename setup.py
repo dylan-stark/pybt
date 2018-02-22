@@ -12,6 +12,7 @@ setup(name='pybt',
       author='Dylan Stark',
       author_email='dylan.stark@gmail.com',
       license='MIT',
+      install_requires=['numpy>=1.9.1'],
       extras_require={
           'tests': ['pytest',
                     'pytest-pep8'],

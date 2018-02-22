@@ -1,3 +1,5 @@
+import numpy as np
+
 class Population:
     def __init__(self, models=None):
         """Initialize the population."""
@@ -6,10 +8,27 @@ class Population:
 
         self._models = models
 
-    def train(self, num_steps):
+    def train(self, num_steps, x, y):
         """Train a population for some number of steps."""
         if num_steps <= 0:
             raise ValueError('num_steps must be positive integer')
 
-        return self._models
+        initial_epoch = 0
+        epochs_per_step = 1
+
+        member = self._sample_from_population()
+        for _ in range(num_steps):
+            self._step(member, x, y, epochs=initial_epoch+epochs_per_step,
+                initial_epoch=initial_epoch)
+
+            initial_epoch += epochs_per_step
+
+        return self._models[0]
+
+    def _sample_from_population(self):
+        return np.random.choice(self._models)
+
+    def _step(self, member, x, y, epochs, initial_epoch):
+        model = member
+        model.fit(x=x, y=y, epochs=epochs, initial_epoch=initial_epoch)
 
