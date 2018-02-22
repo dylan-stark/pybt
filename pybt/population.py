@@ -36,7 +36,7 @@ class Population:
         return self._best()
 
     def _best(self):
-        return self._members[0]._model
+        return self._members[-1]._model
 
     def _sample_from_population(self):
         return copy(np.random.choice(self._members))
