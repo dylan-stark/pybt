@@ -54,7 +54,9 @@ model.compile(optimizer=RMSprop(lr=0.001),
 pop = Population(models=model,
     step_args = {'x': partial_x_train, 'y': partial_y_train},
     eval_args = {'x': x_val, 'y': y_val})
-model = pop.train(num_steps = 4)
+model = pop.train(num_steps = 2)
+
+print(pop)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 
