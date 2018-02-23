@@ -16,6 +16,9 @@ class Population:
 
         self._members = [Member(m, step_args, eval_args) for m in models]
 
+    def __len__(self):
+        return len(self._members)
+
     def __str__(self):
         s = 'Population:\n'
         s += '\n'.join([str(m) for m in self._members])
