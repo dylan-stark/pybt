@@ -15,4 +15,12 @@ def simple_mnist_model():
 
     return network
 
+@pytest.fixture
+def mnist_sample():
+    import numpy as np
+
+    images = np.load('tests/data/mnist_sample_images.npy')
+    labels = np.load('tests/data/mnist_sample_labels.npy')
+
+    return (images, labels)
 

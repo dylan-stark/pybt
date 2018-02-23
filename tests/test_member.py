@@ -19,3 +19,17 @@ class TestMember(object):
         with pytest.raises(TypeError):
             Member(eval_args={})
 
+def test_step_history(simple_mnist_model, mnist_sample):
+    images, labels = mnist_sample
+    m = Member(simple_mnist_model,
+            step_args={'x': images, 'y': labels},
+            eval_args={'x': images, 'y': labels})
+
+    assert len(m._histories) == 0
+    m.step()
+    assert len(m._histories) == 1
+    assert len(m._histories[0]['loss']) == 2 # epochs per step
+    m.step()
+    assert len(m._histories) == 2
+    assert len(m._histories[1]['loss']) == 2 # epochs per step
+
