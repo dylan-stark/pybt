@@ -38,6 +38,15 @@ class TestTrain(object):
             pop = Population(simple_mnist_model)
             pop.train(num_steps=-1)
 
+    def test_final_model(self, simple_mnist_model, mnist_sample):
+        images, labels = mnist_sample
+
+        pop = Population(simple_mnist_model,
+            step_args={'x': images, 'y': labels},
+            eval_args={'x': images, 'y': labels})
+        m = pop.train(num_steps=1)
+        loss, acc = m.evaluate(images, labels)
+
 class TestTidy(object):
     def test_no_train(self):
         results = np.array([[0.99, None,  None,  None]], dtype='float64')

@@ -50,7 +50,7 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-# Create a population with this model and train for 10 steps
+# Create a population with this model and train for 2 steps
 pop = Population(models=model,
     step_args = {'x': partial_x_train, 'y': partial_y_train},
     eval_args = {'x': x_val, 'y': y_val})
