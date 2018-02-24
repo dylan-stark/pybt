@@ -24,3 +24,8 @@ def mnist_sample():
 
     return (images, labels)
 
+@pytest.fixture
+def mnist_eval_args():
+    x, y = mnist_sample()
+    return {'x': x, 'y': y}
+

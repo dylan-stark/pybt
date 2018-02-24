@@ -7,21 +7,20 @@ class TestPopulation(object):
         with pytest.raises(NotImplementedError):
             pop = Population()
 
-    def test_one_model(self):
-        x = 42
-        pop = Population(x)
+    def test_one_model(self, simple_mnist_model, mnist_eval_args):
+        pop = Population(simple_mnist_model, eval_args=mnist_eval_args)
 
         assert len(pop) == 1
 
-    def test_two_models(self, simple_mnist_model):
+    def test_two_models(self, simple_mnist_model, mnist_eval_args):
         ms = [simple_mnist_model, simple_mnist_model]
-        pop = Population(ms)
+        pop = Population(ms, eval_args=mnist_eval_args)
 
         assert len(pop) == 2
 
 class TestTrain(object):
     def test_no_steps(self, simple_mnist_model):
-        with pytest.raises(TypeError):
+        with pytest.raises(ValueError):
             pop = Population(simple_mnist_model)
             pop.train()
 
