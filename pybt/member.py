@@ -11,6 +11,8 @@ class Member:
         self._fit_args['epochs'] = 0
         self._epochs_per_step = 2
 
+        self.eval()
+
     def __copy__(self):
         m = Member(self._model, self._fit_args, self._evaluate_args)
         m._histories = deepcopy(self._histories)
@@ -20,7 +22,8 @@ class Member:
         return m
 
     def __str__(self):
-        s = '\t{} (t={})\n'.format(self._model, self._fit_args['initial_epoch'])
+        s = '\t{} ({} @ t={})\n'.format(self._model,
+                self._p, self._fit_args['initial_epoch'])
         for h in self._histories:
             s += '\t\tacc: {}\n'.format(h['acc'])
 
