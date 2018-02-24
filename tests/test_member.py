@@ -7,16 +7,18 @@ import numpy as np
 from pybt.member import Member
 from pybt.model import ModelWrapper
 
+from test_model import KerasModel
+
 class TestMember(object):
-    def test_missing_args(self, simple_mnist_model):
+    def test_missing_args(self):
         with pytest.raises(TypeError):
             Member()
         with pytest.raises(TypeError):
-            Member(model=simple_mnist_model)
+            Member(model=KerasModel())
         with pytest.raises(TypeError):
-            Member(model=simple_mnist_model, step_args={})
+            Member(model=KerasModel(), step_args={})
         with pytest.raises(TypeError):
-            Member(model=simple_mnist_model, eval_args={})
+            Member(model=KerasModel(), eval_args={})
         with pytest.raises(TypeError):
             Member(step_args={}, eval_args={})
         with pytest.raises(TypeError):
@@ -24,9 +26,10 @@ class TestMember(object):
         with pytest.raises(TypeError):
             Member(eval_args={})
 
-def test_step_history(simple_mnist_model, mnist_sample):
-    images, labels = mnist_sample
-    m = Member(ModelWrapper(simple_mnist_model, 1),
+def test_step_history():
+    images, labels = range(10), range(10)
+
+    m = Member(ModelWrapper(KerasModel(), 1),
             step_args={'x': images, 'y': labels},
             eval_args={'x': images, 'y': labels})
 
@@ -39,8 +42,9 @@ def test_step_history(simple_mnist_model, mnist_sample):
     assert len(m._observations[1]) == 2 # epochs per step
 
 def test_copy_history(simple_mnist_model, mnist_sample):
-    images, labels = mnist_sample
-    m = Member(ModelWrapper(simple_mnist_model, 1),
+    images, labels = range(10), range(10)
+
+    m = Member(ModelWrapper(KerasModel(), 1),
             step_args={'x': images, 'y': labels},
             eval_args={'x': images, 'y': labels})
 

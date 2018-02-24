@@ -14,7 +14,7 @@ class KerasModel:
     def __init__(self):
         self.metrics_names = ['acc', 'val']
 
-    def fit(self, epochs, initial_epoch):
+    def fit(self, x=None, y=None, epochs=None, initial_epoch=None):
         history = {
             'acc': np.array([e for e in range(initial_epoch, epochs)]),
             'val': np.array([e + 0.5 for e in range(initial_epoch, epochs)])
@@ -22,7 +22,7 @@ class KerasModel:
 
         return self.History(history)
 
-    def evaluate(self):
+    def evaluate(self, x=None, y=None):
         return 0.01, 0.99
 
 def test_str():
