@@ -41,12 +41,13 @@ def test_step_history():
     assert len(m._observations) == 2
     assert len(m._observations[1]) == 2 # epochs per step
 
-def test_copy_history(simple_mnist_model, mnist_sample):
-    images, labels = range(10), range(10)
+def test_copy_history():
+    x_train, y_train = range(10), range(10)
+    x_val, y_val = range(10), range(10)
 
     m = Member(ModelWrapper(KerasModel(), 1),
-            step_args={'x': images, 'y': labels},
-            eval_args={'x': images, 'y': labels})
+        step_args={'x': x_train, 'y': y_train},
+        eval_args={'x': x_val, 'y': y_val})
 
     m.step()
     m.step()
