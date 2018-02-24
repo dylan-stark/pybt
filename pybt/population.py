@@ -3,6 +3,7 @@ from copy import copy
 import numpy as np
 
 from pybt.member import Member
+from pybt.model import ModelWrapper
 
 class Population:
     def __init__(self, models=None, step_args={}, eval_args={}):
@@ -14,6 +15,7 @@ class Population:
         else:
             models = [models]
 
+        models = [ModelWrapper(m, i) for i, m in enumerate(models)]
         self._members = [Member(m, step_args, eval_args) for m in models]
 
     def __len__(self):
@@ -24,6 +26,11 @@ class Population:
         s += '\n'.join([str(m) for m in self._members])
 
         return s
+
+    def asarray(self):
+        """Compile recorded observations across the population."""
+        #return self._members[0].asarray()
+        return np.vstack([m.asarray() for m in self._members])
 
     def train(self, num_steps):
         """Train a population for some number of steps."""

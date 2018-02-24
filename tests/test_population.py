@@ -1,6 +1,10 @@
+import numpy as np
+
 import pytest
 
 from pybt import Population
+
+from test_model import KerasModel
 
 class TestPopulation(object):
     def test_no_models(self):
@@ -33,4 +37,22 @@ class TestTrain(object):
         with pytest.raises(ValueError):
             pop = Population(simple_mnist_model)
             pop.train(num_steps=-1)
+
+class TestTidy(object):
+    def test_no_train(self):
+        results = np.array([[0.99, None,  None,  None]], dtype='float64')
+
+        pop = Population(KerasModel())
+        assert np.allclose(pop.asarray(), results, equal_nan=True)
+
+    def test_one_step(self):
+        results = np.array(
+            [[0.99, None,  None,  None],
+             [0.99, 0.  , 0.  , 0.5 ],
+             [0.99, 1.  , 1.  , 1.5 ]],
+            dtype='float64')
+
+        pop = Population(KerasModel())
+        pop.train(num_steps=1)
+        assert np.allclose(pop.asarray(), results, equal_nan=True)
 
