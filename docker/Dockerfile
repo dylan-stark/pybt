@@ -38,6 +38,9 @@ RUN \
 RUN \
     git clone https://github.com/pytest-dev/pytest.git && \
     cd pytest && \
+    python3 setup.py install && \
+    git clone https://github.com/joeyespo/pytest-watch.git && \
+    cd pytest-watch && \
     python3 setup.py install
 
 RUN groupadd -r pybt && useradd -r -m -g pybt pybt
