@@ -7,18 +7,11 @@ from pybt.member import Member
 from pybt.model import ModelWrapper
 
 class Population:
-    def __init__(self, models=None, step_args={}, eval_args={}):
-        """Initialize the population."""
-        if models==None:
-            raise NotImplementedError
-        elif isinstance(models, list):
-            pass
-        else:
-            models = [models]
+    def __init__(self, model, step_args={}, eval_args={}):
+        """Initialize a population with a model."""
 
-        models = [ModelWrapper(m, i) for i, m in enumerate(models)]
-        self._members = [Member(m, i, step_args, eval_args) for i, m in \
-            enumerate(models)]
+        wrapped_model = ModelWrapper(model, 0)
+        self._members = [Member(wrapped_model, 0, step_args, eval_args)]
 
     def __len__(self):
         return len(self._members)

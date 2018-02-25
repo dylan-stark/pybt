@@ -9,7 +9,7 @@ from test_model import KerasModel
 
 class TestPopulation(object):
     def test_no_models(self):
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(TypeError):
             pop = Population()
 
     def test_one_model(self):
@@ -18,28 +18,22 @@ class TestPopulation(object):
 
         assert len(pop) == 1
 
-    def test_two_models(self):
-        pop = Population([KerasModel(), KerasModel()],
-            eval_args={'x': range(10), 'y': range(10)})
-
-        assert len(pop) == 2
-
 class TestTrain(object):
     def test_no_steps(self):
         with pytest.raises(TypeError):
-            pop = Population([KerasModel(), KerasModel()],
+            pop = Population(KerasModel(),
                 eval_args={'x': range(10), 'y': range(10)})
             pop.train()
 
     def test_zero_steps(self):
         with pytest.raises(ValueError):
-            pop = Population([KerasModel(), KerasModel()],
+            pop = Population(KerasModel(),
                 eval_args={'x': range(10), 'y': range(10)})
             pop.train(num_steps=0)
 
     def test_neg_steps(self):
         with pytest.raises(ValueError):
-            pop = Population([KerasModel(), KerasModel()],
+            pop = Population(KerasModel(),
                 eval_args={'x': range(10), 'y': range(10)})
             pop.train(num_steps=-1)
 

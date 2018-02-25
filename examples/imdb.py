@@ -51,7 +51,7 @@ model.compile(optimizer=RMSprop(lr=0.001),
               metrics=['accuracy'])
 
 # Create a population with this model and train for 2 steps
-pop = Population(models=model,
+pop = Population(model=model,
     step_args = {'x': partial_x_train, 'y': partial_y_train},
     eval_args = {'x': x_val, 'y': y_val})
 model = pop.train(num_steps = 2)
