@@ -30,7 +30,7 @@ class TestMember(object):
 def test_step_history():
     images, labels = range(10), range(10)
 
-    m = Member(ModelWrapper(KerasModel(), 1), 1,
+    m = Member(ModelWrapper(KerasModel()), 1,
             step_args={'x': images, 'y': labels},
             eval_args={'x': images, 'y': labels})
 
@@ -46,7 +46,7 @@ def test_copy_history():
     x_train, y_train = range(10), range(10)
     x_val, y_val = range(10), range(10)
 
-    m = Member(ModelWrapper(KerasModel(), 1), 1,
+    m = Member(ModelWrapper(KerasModel()), 1,
         step_args={'x': x_train, 'y': y_train},
         eval_args={'x': x_val, 'y': y_val})
 

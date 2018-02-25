@@ -10,7 +10,7 @@ class Population:
     def __init__(self, model, step_args={}, eval_args={}):
         """Initialize a population with a model."""
 
-        wrapped_model = ModelWrapper(model, 0)
+        wrapped_model = ModelWrapper(model)
         self._members = [Member(wrapped_model, 0, step_args, eval_args)]
 
     def __len__(self):

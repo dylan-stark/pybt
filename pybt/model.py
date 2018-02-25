@@ -2,14 +2,12 @@ import numpy as np
 import pandas as pd
 
 class ModelWrapper:
-    def __init__(self, model, model_id):
+    def __init__(self, model):
         self._model = model
-        self._id = model_id
-
         self.metrics_names = model.metrics_names
 
     def __str__(self):
-        s = 'PyBT Model {}'.format(self._id)
+        s = 'Model ({})'.format(self._model)
         return s
 
     def fit(self, fit_args):

@@ -31,10 +31,10 @@ class KerasModel:
         return 0.01, 0.99
 
 def test_str():
-    m = ModelWrapper(KerasModel(), 2)
+    m = ModelWrapper(KerasModel())
     s = str(m)
 
-    assert s == 'PyBT Model 2'
+    assert s[:7] == 'Model ('
 
 def test_fit():
     good_results = pd.DataFrame({
@@ -45,7 +45,7 @@ def test_fit():
         'val_loss': [4.75, 5.75, 6.75]
     })
 
-    m = ModelWrapper(KerasModel(), 2)
+    m = ModelWrapper(KerasModel())
     obs = m.fit(fit_args={'initial_epoch': 4, 'epochs': 7})
 
     obs = obs.reindex(sorted(obs.columns), axis=1)
@@ -64,7 +64,7 @@ def test_as_data_frame():
         'val_loss': [i+0.75 for i in range(10)]
     })
 
-    m = ModelWrapper(KerasModel(), 1)
+    m = ModelWrapper(KerasModel())
     h = KerasModel().fit(initial_epoch=0, epochs=10)
     df = m._history_as_data_frame(h.history, 0, 10)
 
