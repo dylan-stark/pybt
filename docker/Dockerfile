@@ -48,7 +48,7 @@ USER pybt
 
 ENV KERAS_BACKEND=tensorflow
 
-WORKDIR /src
+WORKDIR /src/workspace/pybt
 
 EXPOSE 8888
 
