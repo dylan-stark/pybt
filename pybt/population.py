@@ -34,11 +34,11 @@ class Population:
         if num_steps <= 0:
             raise ValueError('num_steps must be positive integer')
 
-        member = self._sample_from_population()
+        member = self._sample_from_population() # This causes a copy
         for _ in range(num_steps):
             member.step()
             member.eval()
-            self._update(member)
+            member = self._update(member)
 
         return self._best()
 
@@ -57,5 +57,8 @@ class Population:
         return copy(np.random.choice(self._members))
 
     def _update(self, member):
-        self._members.append(copy(member))
+        # Add this member to the population because it is a copy of one
+        # that is already in the pop.
+        self._members.append(member)
+        return copy(self._members[-1])
 

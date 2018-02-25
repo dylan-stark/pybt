@@ -14,7 +14,6 @@ class Member:
         self._evaluate_args = copy(eval_args)
 
         empty_obs = {k: [] for k in model.metrics_names}
-        empty_obs['model'] = str()
         empty_obs['epoch'] = int()
         empty_obs['t'] = int()
         empty_df = pd.DataFrame(empty_obs)
@@ -24,11 +23,15 @@ class Member:
         self._fit_args['epochs'] = 0
         self._epochs_per_step = 2
 
+        print('Initialized {}'.format(self._name))
+
         self.eval()
 
     def __copy__(self):
         m = Member(self._model, self._id+1, self._fit_args, self._evaluate_args)
         m._observations = deepcopy(self._observations)
+        m._t = self._t
+        print('Deep copying m{} to {} obs'.format(self._id, m._name))
         m._fit_args['initial_epoch'] = copy(self._fit_args['initial_epoch'])
         m._fit_args['epochs'] = copy(self._fit_args['epochs'])
 
@@ -43,13 +46,15 @@ class Member:
         return s
 
     def step(self):
+        print('Stepping {}'.format(self._name))
+
         self._fit_args['epochs'] = \
             self._fit_args['initial_epoch'] + self._epochs_per_step
 
         obs = self._model.fit(self._fit_args)
-        obs['model'] = self._name
         obs['t'] = self._t
         self._observations.append(obs)
+        print('num obs: {}'.format(len(self._observations)))
 
         self._fit_args['initial_epoch'] += self._epochs_per_step
 
@@ -60,5 +65,8 @@ class Member:
         self._p = acc
 
     def as_data_frame(self):
-        return pd.concat(self._observations, ignore_index=True)
+        df = pd.concat(self._observations, ignore_index=True)
+        df['model'] = self._name
+
+        return df
 

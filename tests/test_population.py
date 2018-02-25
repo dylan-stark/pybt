@@ -70,11 +70,16 @@ class TestTidy(object):
 
         pop = Population(KerasModel())
         pop.train(num_steps=1)
-        assert pop.as_data_frame().equals(good_results)
+
+        df = pop.as_data_frame()
+        df = df.reindex_axis(sorted(df.columns), axis=1)
+        print('result:\n{}'.format(df))
+        print('should be:\n{}'.format(good_results))
+        assert df.equals(good_results)
 
     def test_two_steps(self):
         good_results = pd.DataFrame({
-            'model': ['m1', 'm1', 'm1', 'm1', 'm1', 'm1'],
+            'model': ['m1', 'm1', 'm2', 'm2', 'm2', 'm2'],
             't': [0, 0, 0, 0, 1, 1],
             'epoch': [0, 1, 0, 1, 2, 3],
             'acc': [0.0, 1.0, 0.0, 1.0, 2.0, 3.0],
@@ -83,7 +88,9 @@ class TestTidy(object):
 
         pop = Population(KerasModel())
         pop.train(num_steps=2)
-        print(pop.as_data_frame())
-        print(good_results)
-        assert pop.as_data_frame().equals(good_results)
+        df = pop.as_data_frame()
+        df = df.reindex_axis(sorted(df.columns), axis=1)
+        print('result:\n{}'.format(df))
+        print('should be:\n{}'.format(good_results))
+        assert df.equals(good_results)
 
