@@ -65,14 +65,16 @@ class TestTidy(object):
             't': [0, 0],
             'epoch': [0, 1],
             'acc': [0.0, 1.0],
-            'loss': [0.5, 1.5]
+            'loss': [0.5, 1.5],
+            'val_acc': [0.25, 1.25],
+            'val_loss': [0.75, 1.75]
         })
 
         pop = Population(KerasModel())
         pop.train(num_steps=1)
 
         df = pop.as_data_frame()
-        df = df.reindex_axis(sorted(df.columns), axis=1)
+        df = df.reindex(sorted(df.columns), axis=1)
         print('result:\n{}'.format(df))
         print('should be:\n{}'.format(good_results))
         assert df.equals(good_results)
@@ -83,13 +85,15 @@ class TestTidy(object):
             't': [0, 0, 0, 0, 1, 1],
             'epoch': [0, 1, 0, 1, 2, 3],
             'acc': [0.0, 1.0, 0.0, 1.0, 2.0, 3.0],
-            'loss': [0.5, 1.5, 0.5, 1.5, 2.5, 3.5]
+            'loss': [0.5, 1.5, 0.5, 1.5, 2.5, 3.5],
+            'val_acc': [0.25, 1.25, 0.25, 1.25, 2.25, 3.25],
+            'val_loss': [0.75, 1.75, 0.75, 1.75, 2.75, 3.75]
         })
 
         pop = Population(KerasModel())
         pop.train(num_steps=2)
         df = pop.as_data_frame()
-        df = df.reindex_axis(sorted(df.columns), axis=1)
+        df = df.reindex(sorted(df.columns), axis=1)
         print('result:\n{}'.format(df))
         print('should be:\n{}'.format(good_results))
         assert df.equals(good_results)

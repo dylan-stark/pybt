@@ -40,8 +40,8 @@ class Member:
     def __str__(self):
         s = '\t{} ({} @ t={}, e={})\n'.format(self._model,
                 self._p, self._t, self._fit_args['initial_epoch'])
-        if len(self._observations) > 0:
-            s += '{}\n'.format(np.vstack(self._observations))
+        #if len(self._observations) > 0:
+        #    s += '{}\n'.format(np.vstack(self._observations))
 
         return s
 
