@@ -1,9 +1,12 @@
 import numpy as np
+import pandas as pd
 
 class ModelWrapper:
     def __init__(self, model, model_id):
         self._model = model
         self._id = model_id
+
+        self.metrics_names = model.metrics_names
 
     def __str__(self):
         s = 'PyBT Model {}'.format(self._id)
@@ -12,20 +15,18 @@ class ModelWrapper:
     def fit(self, fit_args):
         history = self._model.fit(**fit_args)
 
-        table = self._history_table(self._model, history,
+        df = self._history_as_data_frame(history.history,
             fit_args['initial_epoch'], fit_args['epochs'])
 
-        return table
+        return df
 
     def evaluate(self, eval_args):
         loss, acc = self._model.evaluate(**eval_args)
         return loss, acc
 
-    def _history_table(self, model, history, start_epoch, stop_epoch):
-        """Create a table of observations per epoch."""
-        metric_table = [range(start_epoch, stop_epoch)] + \
-            [history.history[k] for k in model.metrics_names]
-        obs_table = np.array(metric_table, dtype='float64').transpose()
+    def _history_as_data_frame(self, history, start_epoch, stop_epoch):
+        history['epoch'] = range(start_epoch, stop_epoch)
+        df =  pd.DataFrame(history)
 
-        return obs_table
+        return df
 

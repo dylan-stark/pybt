@@ -1,6 +1,7 @@
 import pytest
 
 import numpy as np
+import pandas as pd
 
 from pybt.model import ModelWrapper
 
@@ -37,4 +38,17 @@ def test_fit():
 
     assert np.allclose(obs,
         [[4., 4., 4.5], [5., 5., 5.5], [6., 6., 6.5]])
+
+def test_as_data_frame():
+    good_result = pd.DataFrame({
+        'epoch': [i for i in range(10)],
+        'acc': [i for i in range(10)],
+        'val': [i+0.5 for i in range(10)]
+    })
+
+    m = ModelWrapper(KerasModel(), 1)
+    h = KerasModel().fit(initial_epoch=0, epochs=10)
+    df = m._history_as_data_frame(h.history, 0, 10)
+
+    assert df.equals(good_result)
 

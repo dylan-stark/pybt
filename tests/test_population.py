@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 import pytest
 
@@ -55,19 +56,34 @@ class TestTrain(object):
 
 class TestTidy(object):
     def test_no_train(self):
-        results = np.array([[0.99, None,  None,  None]], dtype='float64')
-
         pop = Population(KerasModel())
-        assert np.allclose(pop.asarray(), results, equal_nan=True)
+        assert pop.as_data_frame().empty
 
     def test_one_step(self):
-        results = np.array(
-            [[0.99, None,  None,  None],
-             [0.99, 0.  , 0.  , 0.5 ],
-             [0.99, 1.  , 1.  , 1.5 ]],
-            dtype='float64')
+        good_results = pd.DataFrame({
+            'model': ['m1', 'm1'],
+            't': [0, 0],
+            'epoch': [0, 1],
+            'acc': [0.0, 1.0],
+            'val': [0.5, 1.5]
+        })
 
         pop = Population(KerasModel())
         pop.train(num_steps=1)
-        assert np.allclose(pop.asarray(), results, equal_nan=True)
+        assert pop.as_data_frame().equals(good_results)
+
+    def test_two_steps(self):
+        good_results = pd.DataFrame({
+            'model': ['m1', 'm1', 'm1', 'm1', 'm1', 'm1'],
+            't': [0, 0, 0, 0, 1, 1],
+            'epoch': [0, 1, 0, 1, 2, 3],
+            'acc': [0.0, 1.0, 0.0, 1.0, 2.0, 3.0],
+            'val': [0.5, 1.5, 0.5, 1.5, 2.5, 3.5]
+        })
+
+        pop = Population(KerasModel())
+        pop.train(num_steps=2)
+        print(pop.as_data_frame())
+        print(good_results)
+        assert pop.as_data_frame().equals(good_results)
 

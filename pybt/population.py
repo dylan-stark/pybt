@@ -1,6 +1,7 @@
 from copy import copy
 
 import numpy as np
+import pandas as pd
 
 from pybt.member import Member
 from pybt.model import ModelWrapper
@@ -16,7 +17,8 @@ class Population:
             models = [models]
 
         models = [ModelWrapper(m, i) for i, m in enumerate(models)]
-        self._members = [Member(m, step_args, eval_args) for m in models]
+        self._members = [Member(m, i, step_args, eval_args) for i, m in \
+            enumerate(models)]
 
     def __len__(self):
         return len(self._members)
@@ -26,11 +28,6 @@ class Population:
         s += '\n'.join([str(m) for m in self._members])
 
         return s
-
-    def asarray(self):
-        """Compile recorded observations across the population."""
-        #return self._members[0].asarray()
-        return np.vstack([m.asarray() for m in self._members])
 
     def train(self, num_steps):
         """Train a population for some number of steps."""
@@ -44,6 +41,14 @@ class Population:
             self._update(member)
 
         return self._best()
+
+    def as_data_frame(self):
+        """Compile recorded observations across the population."""
+        return pd.concat([m.as_data_frame() for m in self._members],
+            ignore_index=True)
+
+    #def asarray(self):
+    #    return np.vstack([m.asarray() for m in self._members])
 
     def _best(self):
         return self._members[-1]._model._model
