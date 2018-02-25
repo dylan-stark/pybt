@@ -12,11 +12,15 @@ class TestPopulation(object):
         with pytest.raises(TypeError):
             pop = Population()
 
-    def test_one_model(self):
+    def test_len_one_model(self):
         pop = Population(KerasModel(),
             eval_args={'x': range(10), 'y': range(10)})
 
         assert len(pop) == 1
+
+    def test_str(self):
+        s = str(Population(KerasModel()))
+        assert s[:11] == 'Population:'
 
 class TestTrain(object):
     def test_no_steps(self):

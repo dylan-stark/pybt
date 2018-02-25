@@ -43,8 +43,6 @@ class Population:
         return self._members[-1]._model._model
 
     def _update(self, member):
-        # Add this member to the population because it is a copy of one
-        # that is already in the pop.
         self._members.append(member)
         return copy(self._members[-1])
 
