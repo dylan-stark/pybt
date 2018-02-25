@@ -1,7 +1,5 @@
 from copy import copy, deepcopy
 
-import pandas as pd
-
 class Member:
     def __init__(self, model, model_id, step_args, eval_args):
         self._model = model
@@ -12,7 +10,7 @@ class Member:
         self._name = 'm{}'.format(model_id)
 
         self._t = 0
-        self._observations = self._init_observations()
+        self._observations = []
 
         self._fit_args['initial_epoch'] = 0
         self._fit_args['epochs'] = 0
@@ -51,17 +49,11 @@ class Member:
         loss, acc = self._model.evaluate(self._evaluate_args)
         self._p = acc
 
-    def as_data_frame(self):
-        df = pd.concat(self._observations, ignore_index=True)
-        df['model'] = self._name
+    def observations(self):
+        obs = {
+            'observations': self._observations,
+            'member': self._name
+        }
 
-        return df
-
-    def _init_observations(self):
-        empty_obs = {k: [] for k in self._model.metrics_names}
-        empty_obs['epoch'] = int()
-        empty_obs['t'] = int()
-        empty_df = pd.DataFrame(empty_obs)
-
-        return [empty_df]
+        return obs
 

@@ -34,10 +34,8 @@ class Population:
 
         return self._best()
 
-    def as_data_frame(self):
-        """Compile recorded observations across the population."""
-        return pd.concat([m.as_data_frame() for m in self._members],
-            ignore_index=True)
+    def observations(self):
+        return [m.observations() for m in self._members]
 
     def _best(self):
         return self._members[-1]._model._model

@@ -5,6 +5,12 @@ import pandas as pd
 
 from pybt.model import ModelWrapper
 
+def compare_dicts(obs, good_results):
+    assert obs.keys() == good_results.keys()
+    for k, v in obs.items():
+        for a, b in zip(obs[k], good_results[k]):
+            assert a == b
+
 class KerasModel:
     """A minimal Keras model stub."""
 
@@ -37,36 +43,19 @@ def test_str():
     assert s[:7] == 'Model ('
 
 def test_fit():
-    good_results = pd.DataFrame({
-        'epoch': [4, 5, 6],
+    good_results = {
         'acc': [4, 5, 6],
-        'val_acc': [4.25, 5.25, 6.25],
+        'val_loss': [4.75, 5.75, 6.75],
         'loss': [4.5, 5.5, 6.5],
-        'val_loss': [4.75, 5.75, 6.75]
-    })
+        'val_acc': [4.25, 5.25, 6.25],
+        'epochs': [4, 5, 6]
+    }
 
     m = ModelWrapper(KerasModel())
     obs = m.fit(fit_args={'initial_epoch': 4, 'epochs': 7})
 
-    obs = obs.reindex(sorted(obs.columns), axis=1)
-
     print('result:\n{}'.format(obs))
     print('should be:\n{}'.format(good_results))
 
-    obs.equals(good_results)
-
-def test_as_data_frame():
-    good_result = pd.DataFrame({
-        'epoch': [i for i in range(10)],
-        'acc': [i for i in range(10)],
-        'loss': [i+0.5 for i in range(10)],
-        'val_acc': [i+0.25 for i in range(10)],
-        'val_loss': [i+0.75 for i in range(10)]
-    })
-
-    m = ModelWrapper(KerasModel())
-    h = KerasModel().fit(initial_epoch=0, epochs=10)
-    df = m._history_as_data_frame(h.history, 0, 10)
-
-    assert df.equals(good_result)
+    compare_dicts(obs, good_results)
 

@@ -34,13 +34,11 @@ def test_step_history():
             step_args={'x': images, 'y': labels},
             eval_args={'x': images, 'y': labels})
 
-    assert len(m._observations) == 1
+    assert len(m.observations()['observations']) == 0
     m.step()
-    assert len(m._observations) == 2
-    assert len(m._observations[1]) == 2 # epochs per step
+    assert len(m.observations()['observations']) == 1
     m.step()
-    assert len(m._observations) == 3
-    assert len(m._observations[2]) == 2 # epochs per step
+    assert len(m.observations()['observations']) == 2
 
 def test_copy_history():
     x_train, y_train = range(10), range(10)
@@ -52,14 +50,13 @@ def test_copy_history():
 
     m.step()
     m.step()
-    assert len(m._observations) == 3
-    assert len(m._observations[1]) == 2 # epochs per step
+    assert len(m.observations()['observations']) == 2
 
     m2 = copy(m)
-    assert len(m2._observations) == 3
-    assert len(m2._observations[1]) == 2 # epochs per step
-    assert pd.concat(m._observations).equals(pd.concat(m2._observations))
+    assert len(m2.observations()['observations']) == 2
+
     m2.step()
-    assert len(m2._observations) == 4
-    assert pd.concat(m._observations).equals(pd.concat(m2._observations[:3]))
+    m2.step()
+    assert len(m.observations()['observations']) == 2
+    assert len(m2.observations()['observations']) == 4
 
