@@ -65,7 +65,7 @@ class TestTidy(object):
             't': [0, 0],
             'epoch': [0, 1],
             'acc': [0.0, 1.0],
-            'val': [0.5, 1.5]
+            'loss': [0.5, 1.5]
         })
 
         pop = Population(KerasModel())
@@ -83,7 +83,7 @@ class TestTidy(object):
             't': [0, 0, 0, 0, 1, 1],
             'epoch': [0, 1, 0, 1, 2, 3],
             'acc': [0.0, 1.0, 0.0, 1.0, 2.0, 3.0],
-            'val': [0.5, 1.5, 0.5, 1.5, 2.5, 3.5]
+            'loss': [0.5, 1.5, 0.5, 1.5, 2.5, 3.5]
         })
 
         pop = Population(KerasModel())

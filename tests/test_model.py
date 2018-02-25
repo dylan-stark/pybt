@@ -13,12 +13,12 @@ class KerasModel:
             self.history = history
 
     def __init__(self):
-        self.metrics_names = ['acc', 'val']
+        self.metrics_names = ['acc', 'loss']
 
     def fit(self, x=None, y=None, epochs=None, initial_epoch=None):
         history = {
             'acc': np.array([e for e in range(initial_epoch, epochs)]),
-            'val': np.array([e + 0.5 for e in range(initial_epoch, epochs)])
+            'loss': np.array([e + 0.5 for e in range(initial_epoch, epochs)])
         }
 
         return self.History(history)
@@ -43,7 +43,7 @@ def test_as_data_frame():
     good_result = pd.DataFrame({
         'epoch': [i for i in range(10)],
         'acc': [i for i in range(10)],
-        'val': [i+0.5 for i in range(10)]
+        'loss': [i+0.5 for i in range(10)]
     })
 
     m = ModelWrapper(KerasModel(), 1)
