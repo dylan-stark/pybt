@@ -1,6 +1,5 @@
 from copy import copy
 
-import numpy as np
 import pandas as pd
 
 from pybt.member import Member
@@ -27,7 +26,7 @@ class Population:
         if num_steps <= 0:
             raise ValueError('num_steps must be positive integer')
 
-        member = self._sample_from_population() # This causes a copy
+        member = copy(self._members[0])
         for _ in range(num_steps):
             member.step()
             member.eval()
@@ -40,14 +39,8 @@ class Population:
         return pd.concat([m.as_data_frame() for m in self._members],
             ignore_index=True)
 
-    #def asarray(self):
-    #    return np.vstack([m.asarray() for m in self._members])
-
     def _best(self):
         return self._members[-1]._model._model
-
-    def _sample_from_population(self):
-        return copy(np.random.choice(self._members))
 
     def _update(self, member):
         # Add this member to the population because it is a copy of one
