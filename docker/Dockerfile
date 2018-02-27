@@ -1,56 +1,47 @@
-FROM tensorflow/tensorflow:1.5.0-py3
+FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    git \
-    unzip \
-    pkg-config \
-    libopenblas-dev \
-    liblapack-dev \
-    && rm -rf /var/lib/apt/lists/*
+ENV CONDA_DIR /opt/conda
+ENV PATH $CONDA_DIR/bin:$PATH
 
-RUN apt-get update && apt-get install -y \
-    python3-numpy \
-    python3-scipy \
-    python3-matplotlib \
-    python3-yaml \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p $CONDA_DIR && \
+    echo export PATH=$CONDA_DIR/bin:'$PATH' > /etc/profile.d/conda.sh && \
+    apt-get update && \
+    apt-get install -y wget git libhdf5-dev g++ graphviz bzip2 && \
+    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh && \
+    echo "c59b3dd3cad550ac7596e0d599b91e75d88826db132e4146030ef471bb434e9a *Miniconda3-4.2.12-Linux-x86_64.sh" | sha256sum -c - && \
+    /bin/bash /Miniconda3-4.2.12-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+    rm Miniconda3-4.2.12-Linux-x86_64.sh
 
-RUN apt-get update && apt-get install -y \
-    libhdf5-serial-dev \
-    python3-h5py \
-    && rm -rf /var/lib/apt/lists/*
+ENV NB_USER keras
+ENV NB_UID 1000
 
-RUN apt-get update && apt-get install -y \
-    graphviz \
-    python3-pydot \
-    && rm -rf /var/lib/apt/lists/*
+RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown keras $CONDA_DIR -R && \
+    mkdir -p /src && \
+    chown keras /src
 
-RUN apt-get update && apt-get install -y \
-    python3-setuptools
+USER keras
 
-RUN \
-    git clone https://github.com/fchollet/keras && \
-    cd keras && \
-    python3 setup.py install
+# Python
+ARG python_version=3.6
 
-RUN \
-    git clone https://github.com/pytest-dev/pytest.git && \
-    cd pytest && \
-    python3 setup.py install && \
-    git clone https://github.com/joeyespo/pytest-watch.git && \
-    cd pytest-watch && \
-    python3 setup.py install
-
-RUN groupadd -r pybt && useradd -r -m -g pybt pybt
-USER pybt
+RUN conda install -y python=${python_version} && \
+    pip install --upgrade pip && \
+    pip install tensorflow && \
+    conda install Pillow scikit-learn notebook pandas matplotlib mkl nose pyyaml six h5py pytest && \
+    pip install sklearn_pandas pytest-watch && \
+    git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
+    pip install git+git://github.com/keras-team/keras.git && \
+    conda clean -yt
 
 ENV KERAS_BACKEND=tensorflow
 
-WORKDIR /src/workspace/pybt
+ENV PYTHONPATH='/src/:$PYTHONPATH'
+
+WORKDIR /src
 
 EXPOSE 8888
 
-CMD jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root
+CMD jupyter notebook --port=8888 --ip=0.0.0.0
 
