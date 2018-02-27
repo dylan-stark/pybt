@@ -60,3 +60,15 @@ def test_copy_history():
     assert len(m.observations()['observations']) == 2
     assert len(m2.observations()['observations']) == 4
 
+def test_member_done():
+    from pybt.member import StopAfter
+
+    m = Member(ModelWrapper(KerasModel()), 1, step_args={}, eval_args={},
+        stopping_criteria=StopAfter(epochs=4))
+
+    assert m.done() == False
+    m.step()
+    assert m.done() == False
+    m.step()
+    assert m.done() == True
+

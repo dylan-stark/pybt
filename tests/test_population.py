@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 
 from pybt import Population
+from pybt.member import StopAfter
 
 from test_model import KerasModel
 
@@ -44,33 +45,16 @@ class TestPopulation(object):
         assert s[:11] == 'Population:'
 
 class TestTrain(object):
-    def test_no_steps(self):
-        with pytest.raises(TypeError):
-            pop = Population(KerasModel(),
-                eval_args={'x': range(10), 'y': range(10)})
-            pop.train()
-
-    def test_zero_steps(self):
-        with pytest.raises(ValueError):
-            pop = Population(KerasModel(),
-                eval_args={'x': range(10), 'y': range(10)})
-            pop.train(num_steps=0)
-
-    def test_neg_steps(self):
-        with pytest.raises(ValueError):
-            pop = Population(KerasModel(),
-                eval_args={'x': range(10), 'y': range(10)})
-            pop.train(num_steps=-1)
-
     def test_final_model(self):
         x_train, y_train = range(10), range(10)
         x_val, y_val = range(10), range(10)
         x_test, y_test = range(10), range(10)
 
         pop = Population(KerasModel(),
+            stopping_criteria=StopAfter(epochs=2),
             step_args={'x': x_train, 'y': y_train},
             eval_args={'x': x_val, 'y': y_val})
-        m = pop.train(num_steps=1)
+        m = pop.train()
         loss, acc = m.evaluate(x_test, y_test)
 
 class TestTidy(object):
@@ -90,8 +74,8 @@ class TestTidy(object):
                  't': 0}]}
         ]
 
-        pop = Population(KerasModel())
-        pop.train(num_steps=1)
+        pop = Population(KerasModel(), StopAfter(2))
+        pop.train()
 
         obs = pop.observations()
 
@@ -125,8 +109,8 @@ class TestTidy(object):
                  't': 1}]}
         ]
 
-        pop = Population(KerasModel())
-        pop.train(num_steps=2)
+        pop = Population(KerasModel(), StopAfter(4))
+        pop.train()
 
         obs = pop.observations()
 

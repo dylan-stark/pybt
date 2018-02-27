@@ -1,16 +1,16 @@
 from copy import copy
 
-import pandas as pd
-
 from pybt.member import Member
 from pybt.model import ModelWrapper
 
 class Population:
-    def __init__(self, model, step_args={}, eval_args={}):
+    def __init__(self, model, stopping_criteria=None, step_args={},
+            eval_args={}):
         """Initialize a population with a model."""
 
         wrapped_model = ModelWrapper(model)
-        self._members = [Member(wrapped_model, 0, step_args, eval_args)]
+        self._members = [Member(wrapped_model, 0, stopping_criteria,
+            step_args, eval_args)]
 
     def __len__(self):
         return len(self._members)
@@ -21,13 +21,11 @@ class Population:
 
         return s
 
-    def train(self, num_steps):
+    def train(self):
         """Train a population for some number of steps."""
-        if num_steps <= 0:
-            raise ValueError('num_steps must be positive integer')
 
         member = copy(self._members[0])
-        for _ in range(num_steps):
+        while not member.done():
             member.step()
             member.eval()
             member = self._update(member)

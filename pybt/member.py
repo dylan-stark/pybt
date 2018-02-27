@@ -1,11 +1,20 @@
 from copy import copy, deepcopy
 
+class StopAfter:
+    def __init__(self, epochs):
+        self._epochs = epochs
+
+    def __call__(self, fit_args):
+        return self._epochs < (fit_args['initial_epoch'] + 1)
+
 class Member:
-    def __init__(self, model, model_id, step_args, eval_args):
+    def __init__(self, model, model_id, stopping_criteria=StopAfter(epochs=10),
+            step_args={}, eval_args={}):
         self._model = model
         self._id = model_id
         self._fit_args = copy(step_args)
         self._evaluate_args = copy(eval_args)
+        self._stopping_criteria = stopping_criteria
 
         self._name = 'm{}'.format(model_id)
 
@@ -19,7 +28,8 @@ class Member:
         self.eval()
 
     def __copy__(self):
-        m = Member(self._model, self._id+1, self._fit_args, self._evaluate_args)
+        m = Member(self._model, self._id+1, self._stopping_criteria,
+            self._fit_args, self._evaluate_args)
         m._observations = deepcopy(self._observations)
         m._t = self._t
         m._fit_args['initial_epoch'] = copy(self._fit_args['initial_epoch'])
@@ -48,6 +58,9 @@ class Member:
     def eval(self):
         loss, acc = self._model.evaluate(self._evaluate_args)
         self._p = acc
+
+    def done(self):
+        return self._stopping_criteria(self._fit_args)
 
     def observations(self):
         obs = {
