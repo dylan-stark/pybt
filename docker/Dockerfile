@@ -29,7 +29,7 @@ ARG python_version=3.6
 RUN conda install -y python=${python_version} && \
     pip install --upgrade pip && \
     pip install tensorflow && \
-    conda install Pillow scikit-learn notebook pandas matplotlib mkl nose pyyaml six h5py pytest && \
+    conda install Pillow scikit-learn notebook numpy pandas matplotlib mkl nose pyyaml six h5py pytest && \
     pip install sklearn_pandas pytest-watch && \
     git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
     pip install git+git://github.com/keras-team/keras.git && \
@@ -39,7 +39,7 @@ ENV KERAS_BACKEND=tensorflow
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
-WORKDIR /src
+WORKDIR /src/workspace/pybt
 
 EXPOSE 8888
 
