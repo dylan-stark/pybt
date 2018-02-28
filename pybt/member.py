@@ -12,7 +12,17 @@ class Member:
             step_args={}, eval_args={}):
         self._model = model
         self._id = model_id
-        self._step_args = deepcopy(step_args)
+
+        self._step_args = {
+            'epochs_per_step': step_args['epochs_per_step'],
+            'fit_args': {
+                'initial_epoch': step_args['fit_args'].get('initial_epoch', 0),
+                'epochs': step_args['fit_args'].get('epochs', 0),
+                'x': step_args['fit_args']['x'],
+                'y': step_args['fit_args']['y']
+            }
+        }
+
         self._evaluate_args = copy(eval_args)
         self._stopping_criteria = stopping_criteria
 
@@ -20,9 +30,6 @@ class Member:
 
         self._t = 0
         self._observations = []
-
-        self._step_args['fit_args']['initial_epoch'] = 0
-        self._step_args['fit_args']['epochs'] = 0
 
         self.eval()
 
@@ -32,9 +39,9 @@ class Member:
         m._observations = deepcopy(self._observations)
         m._t = self._t
         m._step_args['fit_args']['initial_epoch'] = \
-            copy(self._step_args['fit_args']['initial_epoch'])
+            self._step_args['fit_args']['initial_epoch']
         m._step_args['fit_args']['epochs'] = \
-            copy(self._step_args['fit_args']['epochs'])
+            self._step_args['fit_args']['epochs']
 
         return m
 

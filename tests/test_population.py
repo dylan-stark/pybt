@@ -36,14 +36,16 @@ class TestPopulation(object):
 
     def test_len_one_model(self):
         pop = Population(KerasModel(),
-            step_args={'fit_args': {}},
+            step_args={'epochs_per_step': 2,
+                'fit_args': {'x': {}, 'y': {}}},
             eval_args={'x': range(10), 'y': range(10)})
 
         assert len(pop) == 1
 
     def test_str(self):
         pop = Population(KerasModel(),
-            step_args={'fit_args': {}},
+            step_args={'epochs_per_step': 2,
+                'fit_args': {'x': {}, 'y': {}}},
             eval_args={'x': range(10), 'y': range(10)})
         s = str(pop)
         assert s[:11] == 'Population:'
@@ -65,7 +67,8 @@ def test_final_model():
 class TestTidy(object):
     def test_no_train(self):
         pop = Population(KerasModel(),
-            step_args={'fit_args': {}},
+            step_args={'epochs_per_step': 2,
+                'fit_args': {'x': {}, 'y': {}}},
             eval_args={'x': range(10), 'y': range(10)})
         assert len(pop.observations()) == 1
 
@@ -82,7 +85,7 @@ class TestTidy(object):
         ]
 
         pop = Population(KerasModel(), stopping_criteria=StopAfter(2),
-            step_args={'epochs_per_step': 2, 'fit_args': {}},
+            step_args={'epochs_per_step': 2, 'fit_args': {'x': {}, 'y': {}}},
             eval_args={'x': range(10), 'y': range(10)})
         pop.train()
 
@@ -119,7 +122,7 @@ class TestTidy(object):
         ]
 
         pop = Population(KerasModel(), stopping_criteria=StopAfter(2),
-            step_args={'epochs_per_step': 2, 'fit_args': {}})
+            step_args={'epochs_per_step': 2, 'fit_args': {'x': {}, 'y': {}}})
         pop.train()
 
         obs = pop.observations()

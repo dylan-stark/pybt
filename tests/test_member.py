@@ -66,7 +66,7 @@ def test_member_done():
     from pybt.member import StopAfter
 
     m = Member(ModelWrapper(KerasModel()), 1,
-        step_args={'epochs_per_step': 2, 'fit_args': {}},
+        step_args={'epochs_per_step': 2, 'fit_args': {'x': {}, 'y': {}}},
         eval_args={}, stopping_criteria=StopAfter(epochs=4))
 
     assert m.done() == False

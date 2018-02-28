@@ -17,6 +17,7 @@ from keras.utils import to_categorical
 import numpy as np
 
 from pybt import Population
+from pybt.member import StopAfter
 
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
@@ -51,10 +52,11 @@ model.compile(optimizer=RMSprop(lr=0.001),
               metrics=['accuracy'])
 
 # Create a population with this model and train for 2 steps
-pop = Population(model=model,
-    step_args = {'x': partial_x_train, 'y': partial_y_train},
+pop = Population(model=model, stopping_criteria=StopAfter(4),
+    step_args = {'epochs_per_step': 2,
+        'fit_args': {'x': partial_x_train, 'y': partial_y_train}},
     eval_args = {'x': x_val, 'y': y_val})
-model = pop.train(num_steps = 2)
+model = pop.train()
 
 print(pop)
 
