@@ -18,8 +18,10 @@ class Member:
             'fit_args': {
                 'initial_epoch': step_args['fit_args'].get('initial_epoch', 0),
                 'epochs': step_args['fit_args'].get('epochs', 0),
-                'x': step_args['fit_args']['x'],
-                'y': step_args['fit_args']['y']
+                'batch_size': step_args['fit_args'].get('batch_size', None),
+                'x': step_args['fit_args'].get('x', None),
+                'y': step_args['fit_args'].get('y', None),
+                'validation_data': step_args['fit_args'].get('validation_data', None)
             }
         }
 

@@ -51,7 +51,7 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-# Create a population with this model and train for 2 steps
+# Create a population with this model and train for 2 steps of 2 epochs each
 pop = Population(model=model, stopping_criteria=StopAfter(4),
     step_args = {'epochs_per_step': 2,
         'fit_args': {'x': partial_x_train, 'y': partial_y_train}},

@@ -21,7 +21,8 @@ class KerasModel:
     def __init__(self):
         self.metrics_names = ['acc', 'loss', 'val_acc', 'val_loss']
 
-    def fit(self, x=None, y=None, epochs=None, initial_epoch=None):
+    def fit(self, x=None, y=None, epochs=None, initial_epoch=None,
+            validation_data=None, batch_size=None):
         history = {
             'acc': np.array([e for e in range(initial_epoch, epochs)]),
             'loss': np.array([e + 0.5 for e in range(initial_epoch, epochs)]),
