@@ -36,30 +36,37 @@ class TestPopulation(object):
 
     def test_len_one_model(self):
         pop = Population(KerasModel(),
+            step_args={'fit_args': {}},
             eval_args={'x': range(10), 'y': range(10)})
 
         assert len(pop) == 1
 
     def test_str(self):
-        s = str(Population(KerasModel()))
+        pop = Population(KerasModel(),
+            step_args={'fit_args': {}},
+            eval_args={'x': range(10), 'y': range(10)})
+        s = str(pop)
         assert s[:11] == 'Population:'
 
-class TestTrain(object):
-    def test_final_model(self):
-        x_train, y_train = range(10), range(10)
-        x_val, y_val = range(10), range(10)
-        x_test, y_test = range(10), range(10)
+def test_final_model():
+    x_train, y_train = range(10), range(10)
+    x_val, y_val = range(10), range(10)
+    x_test, y_test = range(10), range(10)
 
-        pop = Population(KerasModel(),
-            stopping_criteria=StopAfter(epochs=2),
-            step_args={'x': x_train, 'y': y_train},
-            eval_args={'x': x_val, 'y': y_val})
-        m = pop.train()
-        loss, acc = m.evaluate(x_test, y_test)
+    pop = Population(KerasModel(),
+        stopping_criteria=StopAfter(epochs=2),
+        step_args={
+            'epochs_per_step': 2,
+            'fit_args': {'x': x_train, 'y': y_train}},
+        eval_args={'x': x_val, 'y': y_val})
+    m = pop.train()
+    loss, acc = m.evaluate(x_test, y_test)
 
 class TestTidy(object):
     def test_no_train(self):
-        pop = Population(KerasModel())
+        pop = Population(KerasModel(),
+            step_args={'fit_args': {}},
+            eval_args={'x': range(10), 'y': range(10)})
         assert len(pop.observations()) == 1
 
     def test_one_step(self):
@@ -74,7 +81,9 @@ class TestTidy(object):
                  't': 0}]}
         ]
 
-        pop = Population(KerasModel(), StopAfter(2))
+        pop = Population(KerasModel(), stopping_criteria=StopAfter(2),
+            step_args={'epochs_per_step': 2, 'fit_args': {}},
+            eval_args={'x': range(10), 'y': range(10)})
         pop.train()
 
         obs = pop.observations()
@@ -109,7 +118,8 @@ class TestTidy(object):
                  't': 1}]}
         ]
 
-        pop = Population(KerasModel(), StopAfter(4))
+        pop = Population(KerasModel(), stopping_criteria=StopAfter(2),
+            step_args={'epochs_per_step': 2, 'fit_args': {}})
         pop.train()
 
         obs = pop.observations()

@@ -31,7 +31,8 @@ def test_step_history():
     images, labels = range(10), range(10)
 
     m = Member(ModelWrapper(KerasModel()), 1,
-            step_args={'x': images, 'y': labels},
+            step_args={'epochs_per_step': 2,
+                'fit_args': {'x': images, 'y': labels}},
             eval_args={'x': images, 'y': labels})
 
     assert len(m.observations()['observations']) == 0
@@ -45,7 +46,8 @@ def test_copy_history():
     x_val, y_val = range(10), range(10)
 
     m = Member(ModelWrapper(KerasModel()), 1,
-        step_args={'x': x_train, 'y': y_train},
+        step_args={'epochs_per_step': 2,
+            'fit_args': {'x': x_train, 'y': y_train}},
         eval_args={'x': x_val, 'y': y_val})
 
     m.step()
@@ -63,8 +65,9 @@ def test_copy_history():
 def test_member_done():
     from pybt.member import StopAfter
 
-    m = Member(ModelWrapper(KerasModel()), 1, step_args={}, eval_args={},
-        stopping_criteria=StopAfter(epochs=4))
+    m = Member(ModelWrapper(KerasModel()), 1,
+        step_args={'epochs_per_step': 2, 'fit_args': {}},
+        eval_args={}, stopping_criteria=StopAfter(epochs=4))
 
     assert m.done() == False
     m.step()
