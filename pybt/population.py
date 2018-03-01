@@ -1,44 +1,48 @@
+import logging
+
 from copy import copy
 
-from pybt.member import Member
-from pybt.model import ModelWrapper
-
 class Population:
-    def __init__(self, model, stopping_criteria=None, step_args={},
-            eval_args={}):
-        """Initialize a population with a model."""
+    """A collection of model members.
 
-        wrapped_model = ModelWrapper(model)
-        self._members = [Member(wrapped_model, 0, stopping_criteria,
-            step_args, eval_args)]
+    # Arguments:
+        member: an initial member for the population.
+    """
+
+    def __init__(self, member):
+        self._logger = logging.getLogger(__name__)
+        self._logger.debug('Population({})'.format(member))
+
+        self._members = [member]
+
+        self._logger.debug('Population(_) = {}'.format(self))
+
+    def __iter__(self):
+        return iter(self._members)
 
     def __len__(self):
         return len(self._members)
 
     def __str__(self):
-        s = 'Population:\n'
-        s += '\n'.join([str(m) for m in self._members])
-
+        s = '[{}]'.format(', '.join([str(m) for m in self._members]))
         return s
 
-    def train(self):
-        """Train a population for some number of steps."""
+    def get(self):
+        member = sorted(self._members, key=lambda x: x._p)[-1]
 
-        member = copy(self._members[0])
-        while not member.done():
-            member.step()
-            member.eval()
-            member = self._update(member)
+        self._logger.debug('get() = {}"'.format(member))
 
-        return self._best()
+        return copy(member)
 
-    def observations(self):
-        return [m.observations() for m in self._members]
+    def put(self, x):
+        self._logger.debug('put({})'.format(x))
 
-    def _best(self):
-        return self._members[-1]._model._model
+        self._members.append(x)
+        y = copy(self._members[-1])
 
-    def _update(self, member):
-        self._members.append(member)
-        return copy(self._members[-1])
+        self._logger.info('population after put = {}'.format(self))
+
+        self._logger.debug('put(_) = {}'.format(y))
+
+        return y
 

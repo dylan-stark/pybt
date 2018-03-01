@@ -41,6 +41,9 @@ ENV PYTHONPATH='/src/:$PYTHONPATH'
 
 WORKDIR /src/workspace/pybt
 
+# Load MNIST data set
+RUN python -c "from keras.datasets import imdb; imdb.load_data()"
+
 EXPOSE 8888
 
 CMD jupyter notebook --port=8888 --ip=0.0.0.0

@@ -7,6 +7,9 @@ with Python that was also made available in the
     https://github.com/fchollet/deep-learning-with-python-notebooks
 """
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 from keras import layers, models
 from keras.datasets import imdb
 from keras.layers import Dense
@@ -16,8 +19,10 @@ from keras.utils import to_categorical
 
 import numpy as np
 
-from pybt import Population
-from pybt.member import StopAfter
+from pybt import Trainer
+from pybt.model import KerasModelWrapper
+from pybt.policy.done import StopAfter
+from pybt.policy.ready import ReadyAfter
 
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
@@ -51,14 +56,17 @@ model.compile(optimizer=RMSprop(lr=0.001),
               loss=binary_crossentropy,
               metrics=['accuracy'])
 
-# Create a population with this model and train for 2 steps of 2 epochs each
-pop = Population(model=model, stopping_criteria=StopAfter(4),
-    step_args = {'epochs_per_step': 2,
+# Create a population with this model and train
+m = KerasModelWrapper(model, optimizer=RMSprop(lr=0.001),
+    loss=binary_crossentropy, metrics=['accuracy'])
+t = Trainer(model=m, stopping_criteria=StopAfter(4),
+    ready_strategy=ReadyAfter(1),
+    step_args = {'epochs_per_step': 1,
         'fit_args': {'x': partial_x_train, 'y': partial_y_train}},
     eval_args = {'x': x_val, 'y': y_val})
-model = pop.train()
+model, score = t.train()
 
-print(pop)
+print(t)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 

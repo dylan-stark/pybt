@@ -1,15 +1,26 @@
+import logging
+
 from copy import copy, deepcopy
 
-class StopAfter:
-    def __init__(self, epochs):
-        self._epochs = epochs
-
-    def __call__(self, fit_args):
-        return self._epochs < (fit_args['initial_epoch'] + 1)
-
 class Member:
-    def __init__(self, model, model_id, stopping_criteria=StopAfter(epochs=10),
-            step_args={}, eval_args={}):
+    """A member of the population.
+
+    # Arguments:
+        model: a wrapped model.
+        model_id: an identifier for the model.
+        stopping_criteria: some stopping criteria.
+        ready_strategy: a means to determine readiness.
+        step_args: arguments for each step, to be passed on to the model fit
+            method.
+        eval_args: arguments for model evaluation, to be passed on to the
+            model evaluation method.
+    """
+    def __init__(self, model, model_id, stopping_criteria=None,
+            ready_strategy=None, step_args={}, eval_args={}):
+        self._logger = logging.getLogger(__name__)
+        self._logger.debug('Member({}, {}, {})'.format(
+            model_id, stopping_criteria, ready_strategy))
+
         self._model = model
         self._id = model_id
 
@@ -27,33 +38,40 @@ class Member:
 
         self._evaluate_args = copy(eval_args)
         self._stopping_criteria = stopping_criteria
+        self._ready_strategy = ready_strategy
 
         self._name = 'm{}'.format(model_id)
 
         self._t = 0
         self._observations = []
 
+        self._p = None
+
         self.eval()
 
+        self._logger.debug('Member(_) = {}'.format(self))
+
     def __copy__(self):
-        m = Member(self._model, self._id+1, self._stopping_criteria,
-            self._step_args, self._evaluate_args)
+        self._logger.debug('copy({})'.format(self))
+
+        m = Member(copy(self._model), self._id+1, self._stopping_criteria,
+            self._ready_strategy, self._step_args, self._evaluate_args)
         m._observations = deepcopy(self._observations)
         m._t = self._t
-        m._step_args['fit_args']['initial_epoch'] = \
-            self._step_args['fit_args']['initial_epoch']
-        m._step_args['fit_args']['epochs'] = \
-            self._step_args['fit_args']['epochs']
+
+        self._logger.debug('copy(_) = {}'.format(m))
 
         return m
 
     def __str__(self):
-        s = '\t{} ({} @ t={}, e={})\n'.format(self._model,
-                self._p, self._t, self._step_args['fit_args']['initial_epoch'])
+        s = 'M(p={}, t={}, e={})'.format(self._p, self._t,
+            self._step_args['fit_args']['initial_epoch'])
 
         return s
 
     def step(self):
+        self._logger.debug('step({})'.format(self))
+
         self._step_args['fit_args']['epochs'] = \
             self._step_args['fit_args']['initial_epoch'] + \
             self._step_args['epochs_per_step']
@@ -66,13 +84,29 @@ class Member:
             self._step_args['epochs_per_step']
 
         self._t += 1
+        self._p = None
+
+        self._logger.debug('step(_) = {}'.format(self))
 
     def eval(self):
-        loss, acc = self._model.evaluate(self._evaluate_args)
+        self._logger.debug('eval({}, {})'.format(self, self._evaluate_args))
+
+        loss, acc = self._model.eval(self._evaluate_args)
         self._p = acc
+
+        self._logger.debug('eval(_) = {}'.format(self))
+
+    def explore(self):
+        self._model.explore()
 
     def done(self):
         return self._stopping_criteria(self._step_args['fit_args'])
+
+    def ready(self):
+        status = self._ready_strategy(self._step_args['fit_args'])
+        logging.debug('ready status = {}'.format(status))
+
+        return status
 
     def observations(self):
         obs = {
