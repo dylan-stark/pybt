@@ -92,6 +92,8 @@ class KerasModelWrapper(ModelWrapper):
         fit_args['batch_size'] = \
             self._perturb_batch_size(fit_args['batch_size'])
 
+        self._perturb_lr()
+
     def _clone(self, model):
         logger.debug('_clone(model={})'.format(model))
 
@@ -102,6 +104,8 @@ class KerasModelWrapper(ModelWrapper):
         return x
 
     def _perturb_batch_size(self, batch_size):
+        logger.debug('_perturb_batch_size(batch_size={})'.format(batch_size))
+
         if batch_size is None:
             batch_size = 32
         logger.debug('current batch size = {}'.format(batch_size))
@@ -113,4 +117,18 @@ class KerasModelWrapper(ModelWrapper):
         logger.debug('new batch size = {}'.format(x))
 
         return x
+
+    def _perturb_lr(self):
+        logger.debug('_perturb_lr()')
+
+        lr = float(K.get_value(self._model.optimizer.lr))
+        logger.debug('current lr = {}'.format(lr))
+
+        upper_bound = -1
+        lower_bound = -7
+        x = np.random.uniform(upper_bound, lower_bound)
+        x = np.power(10, x)
+        K.set_value(self._model.optimizer.lr, x)
+
+        logger.debug('new lr = {}'.format(x))
 
