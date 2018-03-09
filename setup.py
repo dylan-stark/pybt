@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='pybt',
-      version='0.1.0',
+      version='0.2.0',
       description='Simple Populatin Based Training',
       long_description=readme(),
       url='http://github.com/dylan-stark/pybt',
