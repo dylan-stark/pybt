@@ -32,8 +32,9 @@ class ModelWrapper(ABC):
         logger.debug('ModelWrapper(model={}, **kwargs={})'.format(model,
             kwargs))
 
-        self._model = self._clone(model)
         self._kwargs = kwargs
+
+        self._model = self._clone(model)
 
     @abstractmethod
     def __copy__(self):
