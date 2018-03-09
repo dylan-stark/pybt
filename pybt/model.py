@@ -10,6 +10,8 @@ import numpy as np
 
 from keras.models import clone_model
 
+logger = logging.getLogger(__name__)
+
 class ModelWrapper(ABC):
     """Abstract wrapper class for user models.
 
@@ -27,10 +29,11 @@ class ModelWrapper(ABC):
         model: a user model.
     """
     def __init__(self, model, **kwargs):
-        self._logger = logging.getLogger(__name__)
-        self._kwargs = kwargs
+        logger.debug('ModelWrapper(model={}, **kwargs={})'.format(model,
+            kwargs))
 
         self._model = self._clone(model)
+        self._kwargs = kwargs
 
     @abstractmethod
     def __copy__(self):
@@ -60,9 +63,13 @@ class KerasModelWrapper(ModelWrapper):
     """
 
     def __copy__(self):
+        logger.debug('copy({})'.format(self))
+
         return KerasModelWrapper(self._model, **self._kwargs)
 
     def fit(self, fit_args):
+        logger.debug('fit(fit_args={})'.format(fit_args))
+
         history = self._model.fit(**fit_args)
 
         # Add epoch range to history
@@ -72,10 +79,14 @@ class KerasModelWrapper(ModelWrapper):
         return h
 
     def eval(self, eval_args):
+        logger.debug('eval(eval_args={})'.format(eval_args))
+
         loss, acc = self._model.evaluate(**eval_args)
         return loss, acc
 
     def explore(self):
+        logger.debug('explore()')
+
         import keras.backend as K
 
         weights = [np.random.permutation(w.flat).reshape(w.shape) \
@@ -83,6 +94,8 @@ class KerasModelWrapper(ModelWrapper):
         self._model.set_weights(weights)
 
     def _clone(self, model):
+        logger.debug('_clone(model={})'.format(model))
+
         x = clone_model(model)
         x.set_weights(model.get_weights())
         x.compile(**self._kwargs)

@@ -2,6 +2,8 @@ import logging
 
 from copy import copy, deepcopy
 
+logger = logging.getLogger(__name__)
+
 class Member:
     """A member of the population.
 
@@ -15,11 +17,12 @@ class Member:
         eval_args: arguments for model evaluation, to be passed on to the
             model evaluation method.
     """
+
     def __init__(self, model, model_id, stopping_criteria=None,
             ready_strategy=None, step_args={}, eval_args={}):
-        self._logger = logging.getLogger(__name__)
-        self._logger.debug('Member({}, {}, {})'.format(
-            model_id, stopping_criteria, ready_strategy))
+        logger.debug('Member(model={}, model_id={}, stopping_criteria={}, '
+            'ready_strategy={}, step_args={}, eval_args={})'.format(model_id,
+            model_id, stopping_criteria, ready_strategy, step_args, eval_args))
 
         self._model = model
         self._id = model_id
@@ -49,17 +52,17 @@ class Member:
 
         self.eval()
 
-        self._logger.debug('Member(_) = {}'.format(self))
+        logger.debug('Member(_) = {}'.format(self))
 
     def __copy__(self):
-        self._logger.debug('copy({})'.format(self))
+        logger.debug('copy({})'.format(self))
 
         m = Member(copy(self._model), self._id+1, self._stopping_criteria,
             self._ready_strategy, self._step_args, self._evaluate_args)
         m._observations = deepcopy(self._observations)
         m._t = self._t
 
-        self._logger.debug('copy(_) = {}'.format(m))
+        logger.debug('copy(_) = {}'.format(m))
 
         return m
 
@@ -70,7 +73,7 @@ class Member:
         return s
 
     def step(self):
-        self._logger.debug('step({})'.format(self))
+        logger.debug('step({})'.format(self))
 
         self._step_args['fit_args']['epochs'] = \
             self._step_args['fit_args']['initial_epoch'] + \
@@ -86,29 +89,38 @@ class Member:
         self._t += 1
         self._p = None
 
-        self._logger.debug('step(_) = {}'.format(self))
+        logger.debug('step(_) = {}'.format(self))
 
     def eval(self):
-        self._logger.debug('eval({}, {})'.format(self, self._evaluate_args))
+        logger.debug('eval({})'.format(self))
+        logger.debug('_evaluate_args={}'.format(self._evaluate_args))
 
         loss, acc = self._model.eval(self._evaluate_args)
         self._p = acc
 
-        self._logger.debug('eval(_) = {}'.format(self))
+        logger.debug('eval(_) = {}'.format(self))
 
     def explore(self):
+        logger.debug('explore({})'.format(self))
+
         self._model.explore()
 
     def done(self):
+        logger.debug('done({})'.format(self))
+
         return self._stopping_criteria(self._step_args['fit_args'])
 
     def ready(self):
+        logger.debug('ready({})'.format(self))
+
         status = self._ready_strategy(self._step_args['fit_args'])
         logging.debug('ready status = {}'.format(status))
 
         return status
 
     def observations(self):
+        logger.debug('observations({})'.format(self))
+
         obs = {
             'observations': self._observations,
             'member': self._name
