@@ -8,6 +8,7 @@ from copy import copy
 
 import numpy as np
 
+import keras.backend as K
 from keras.models import clone_model
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ class ModelWrapper(ABC):
         pass
 
     @abstractmethod
-    def explore(self):
+    def explore(self, fit_args):
         pass
 
     @abstractmethod
@@ -85,14 +86,11 @@ class KerasModelWrapper(ModelWrapper):
         loss, acc = self._model.evaluate(**eval_args)
         return loss, acc
 
-    def explore(self):
+    def explore(self, fit_args):
         logger.debug('explore()')
 
-        import keras.backend as K
-
-        weights = [np.random.permutation(w.flat).reshape(w.shape) \
-                   for w in self._model.get_weights()]
-        self._model.set_weights(weights)
+        fit_args['batch_size'] = \
+            self._perturb_batch_size(fit_args['batch_size'])
 
     def _clone(self, model):
         logger.debug('_clone(model={})'.format(model))
@@ -100,6 +98,19 @@ class KerasModelWrapper(ModelWrapper):
         x = clone_model(model)
         x.set_weights(model.get_weights())
         x.compile(**self._kwargs)
+
+        return x
+
+    def _perturb_batch_size(self, batch_size):
+        if batch_size is None:
+            batch_size = 32
+        logger.debug('current batch size = {}'.format(batch_size))
+
+        lower_bound = 8
+        x = int(np.random.normal(0, 0.1) * 100)
+        x += batch_size
+        x = np.max([lower_bound, x])
+        logger.debug('new batch size = {}'.format(x))
 
         return x
 

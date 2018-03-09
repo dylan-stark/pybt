@@ -21,6 +21,6 @@ class SimpleWrapper(ModelWrapper):
         loss, acc = self._model.evaluate(**eval_args)
         return loss, acc
 
-    def explore(self):
+    def explore(self, fit_args):
         self._model.explore()
 

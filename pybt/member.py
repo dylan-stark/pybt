@@ -103,7 +103,10 @@ class Member:
     def explore(self):
         logger.debug('explore({})'.format(self))
 
-        self._model.explore()
+        self._model.explore(self._step_args['fit_args'])
+
+        logger.debug('batch_size now {}'.format(
+            self._step_args['fit_args']['batch_size']))
 
     def done(self):
         logger.debug('done({})'.format(self))
