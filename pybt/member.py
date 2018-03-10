@@ -32,10 +32,11 @@ class Member:
             'fit_args': {
                 'initial_epoch': step_args['fit_args'].get('initial_epoch', 0),
                 'epochs': step_args['fit_args'].get('epochs', 0),
-                'batch_size': step_args['fit_args'].get('batch_size', None),
+                'batch_size': step_args['fit_args'].get('batch_size', 32),
                 'x': step_args['fit_args'].get('x', None),
                 'y': step_args['fit_args'].get('y', None),
-                'validation_data': step_args['fit_args'].get('validation_data', None)
+                'validation_data':
+                    step_args['fit_args'].get('validation_data', None)
             }
         }
 
@@ -104,9 +105,6 @@ class Member:
         logger.debug('explore({})'.format(self))
 
         self._model.explore(self._step_args['fit_args'])
-
-        logger.debug('batch_size now {}'.format(
-            self._step_args['fit_args']['batch_size']))
 
     def done(self):
         logger.debug('done({})'.format(self))

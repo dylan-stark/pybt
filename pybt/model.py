@@ -74,9 +74,12 @@ class KerasModelWrapper(ModelWrapper):
 
         history = self._model.fit(**fit_args)
 
-        # Add epoch range to history
+        # Add epoch range and hyperparameter settings to history
         h = history.history
         h['epochs'] = list(range(fit_args['initial_epoch'], fit_args['epochs']))
+        h['batch_size'] = [fit_args['batch_size'] \
+                           for i in range(len(h['epochs']))]
+        h['learning_rate'] = [self._lr() for i in range(len(h['epochs']))]
 
         return h
 
@@ -91,7 +94,6 @@ class KerasModelWrapper(ModelWrapper):
 
         fit_args['batch_size'] = \
             self._perturb_batch_size(fit_args['batch_size'])
-
         self._perturb_lr()
 
     def _clone(self, model):
@@ -116,12 +118,13 @@ class KerasModelWrapper(ModelWrapper):
         x = np.max([lower_bound, x])
         logger.debug('new batch size = {}'.format(x))
 
-        return x
+    def _lr(self):
+        return float(K.get_value(self._model.optimizer.lr))
 
     def _perturb_lr(self):
         logger.debug('_perturb_lr()')
 
-        lr = float(K.get_value(self._model.optimizer.lr))
+        lr = self._lr()
         logger.debug('current lr = {}'.format(lr))
 
         upper_bound = -1
