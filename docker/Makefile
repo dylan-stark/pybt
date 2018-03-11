@@ -16,5 +16,8 @@ ipython: build
 notebook: build
 	docker run -it  -p 8888:8888 -v $(SRC):/src/workspace -v $(DATA):/data pybt
 
+docs: build
+	docker run -it  -p 8000:8000 -v $(SRC):/src/workspace -v $(DATA):/data pybt mkdocs serve --dev-addr 0.0.0.0:8000
+
 .PHONY: build bash ipython notebook
 

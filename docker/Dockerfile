@@ -33,9 +33,13 @@ RUN conda install -y python=${python_version} && \
     pip install sklearn_pandas pytest-watch && \
     git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
     pip install git+git://github.com/keras-team/keras.git && \
+    pip install mkdocs && \
     conda clean -yt
 
 ENV KERAS_BACKEND=tensorflow
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
@@ -45,6 +49,7 @@ WORKDIR /src/workspace/pybt
 RUN python -c "from keras.datasets import imdb; imdb.load_data()"
 
 EXPOSE 8888
+EXPOSE 8000
 
 CMD jupyter notebook --port=8888 --ip=0.0.0.0
 
