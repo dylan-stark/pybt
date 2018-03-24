@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def readme():
     with open('README.md') as f:
@@ -18,6 +18,6 @@ setup(name='pybt',
           'tests': ['pytest',
                     'pytest-pep8'],
       },
-      packages=['pybt'],
+      packages=find_packages(),
       zip_safe=False)
 
