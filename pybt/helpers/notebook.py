@@ -56,7 +56,7 @@ def plot_all_acc(obs, nrow=None, ncol=3):
         step, epoch, acc, loss, val_acc, val_loss = \
             member_observations(obs, index)
 
-        panel.text(18, .9, 'm{}'.format(index), fontsize=24)
+        panel.text(18, .9, '{}'.format(index), fontsize=24)
         panel.plot(epoch, acc, 'bo', label='Training acc.')
         panel.plot(epoch, val_acc, 'b', label='Validation acc.')
 
