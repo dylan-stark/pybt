@@ -44,6 +44,10 @@ WORKDIR /src/workspace/pybt
 # Load MNIST data set
 RUN python -c "from keras.datasets import imdb; imdb.load_data()"
 
+RUN conda install -y python=${python_version} && \
+    pip install git+git://github.com/dylan-stark/pybt.git  && \
+    conda clean -yt
+
 EXPOSE 8888
 
 CMD jupyter notebook --port=8888 --ip=0.0.0.0
