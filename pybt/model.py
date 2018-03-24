@@ -118,6 +118,8 @@ class KerasModelWrapper(ModelWrapper):
         x = np.max([lower_bound, x])
         logger.debug('new batch size = {}'.format(x))
 
+        return x
+
     def _lr(self):
         return float(K.get_value(self._model.optimizer.lr))
 

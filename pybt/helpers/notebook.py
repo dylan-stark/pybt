@@ -35,6 +35,19 @@ def learning_rates(obs):
 
     return epoch, lr
 
+def batch_sizes(obs):
+    """Compile batch size settings by epoch into a table.
+    """
+
+    epoch, batch_size = ([], [])
+
+    for m in obs:
+        for o in m['observations']:
+            epoch.extend(o['epochs'])
+            batch_size.extend(o['batch_size'])
+
+    return epoch, batch_size
+
 def plot_all_acc(obs, nrow=None, ncol=3):
     """Plot training and validation accuracy for all population members.
     """
@@ -131,5 +144,17 @@ def plot_learning_rate(obs):
     plt.scatter(epoch, lr)
     plt.xlabel('Epochs')
     plt.ylabel('Learning rate (log10)')
+
+    return plt
+
+def plot_batch_size(obs):
+    """Plot batch sizes.
+    """
+
+    epoch, bs = batch_sizes(obs)
+
+    plt.scatter(epoch, bs)
+    plt.xlabel('Epochs')
+    plt.ylabel('Batch size')
 
     return plt

@@ -46,7 +46,8 @@ def test_copy_history(keras_model):
 
     m = Member(SimpleWrapper(keras_model), 1,
         step_args={'epochs_per_step': 2,
-            'fit_args': {'x': x_train, 'y': y_train}},
+            'fit_args': {'x': x_train, 'y': y_train,
+                         'batch_size': 42}},
         eval_args={'x': x_val, 'y': y_val})
 
     m.step()
