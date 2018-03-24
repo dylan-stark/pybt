@@ -8,22 +8,22 @@ PyBT is a simple, extensible implementation of DeepMind's [Population Based Trai
 pip install git+https://github.com/dylan-stark/pybt.git
 ```
 
-## Play
+## Usage
 
-If you just want to play around with it, you can use the included [Docker](https://docs.docker.com/install/) image that already includes Keras.
-You can start a notebook server and run the [`notebooks/imdb.ipynb`]() notebook with
+The primary usage mode is for training [Keras]() models.
+This will typically invovle 1. wrapping your model and 2. initializing a trainer.
+And the result is the Keras model with the best score, which you can use right away for scoring, etc.
+
+A good way to get started is to try it out for yourself.
+You can use the included [Docker](https://docs.docker.com/install/) image that already includes Keras to start a notebook server and run the [`notebooks/imdb.ipynb`]() notebook with
 
 ```
 make -f docker/Makefile notebook
 ```
 
-And you can run the examples from a bash shell with `make -f docker/Makefile bash`.
+You can also run the examples from a bash shell with `make -f docker/Makefile bash`.
 
-## Use
-
-The primary usage mode is for training [Keras]() models.
-This will typically invovle 1. wrapping your model and 2. initializing a trainer.
-And the result is the Keras model with the best score, which you can use right away for scoring, etc.
+The following snippet shows a basic setup.
 
 ```
 from keras.models import Sequential
